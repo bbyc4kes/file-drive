@@ -9,11 +9,15 @@ async function hasAccessToOrg(
 ) {
   const user = await getUser(ctx, tokenIdentifier)
 
+  if (!user) {
+    return null
+  }
+
   const hasAccess =
     user.orgIds.includes(orgId) || user.tokenIdentifier.includes(orgId)
 
   if (!hasAccess) {
-    throw new ConvexError('You do not have access to perform this action.')
+    return null
   }
 
   return hasAccess
