@@ -1,36 +1,34 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# <p align="center">File Drive Project</p>
 
-## Getting Started
+The File Drive Project is a web application designed to provide users with a convenient platform for storing and managing files. It offers a secure and efficient way to upload, organize, and access files from anywhere.
 
-First, run the development server:
+## Features
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- Upload files of various formats such as documents, images, and videos.
+- Organize files into folders for easy management.
+- Search for specific files by name, type, or date.
+- Share files with other users via secure links.
+- Collaborate on files with team members through shared folders.
+- Responsive design for seamless access on different devices.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Technologies Used
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- React: A JavaScript library for building user interfaces
+- Next.js: A React framework for server-side rendering and static site generation
+- Shadcn: A decentralized storage solution for secure and tamper-proof file storage
+- TypeScript: A typed superset of JavaScript for enhanced code quality and maintainability
+- Tailwind CSS: A utility-first CSS framework for rapid UI development
+- [Any additional technologies or libraries used in your project]
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+## How to Run
 
-## Learn More
+1. Clone this repository to your local machine.
+2. Navigate to the project directory.
+3. Run `npm install` to install dependencies.
+4. Run `npm run dev` to start the development server.
+5. Open your browser and go to
+6. `http://localhost:3000` to access the file drive.
 
-To learn more about Next.js, take a look at the following resources:
+## Contributors
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+[Maksym Azimov](https://github.com/bbyc4kes) - Lead Developer.
