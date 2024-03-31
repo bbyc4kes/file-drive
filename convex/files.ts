@@ -48,8 +48,6 @@ export const createFile = mutation({
       args.orgId
     )
 
-    console.log(identity.tokenIdentifier)
-
     if (!hasAccess) {
       throw new ConvexError('You do not have access to perform this action.')
     }
@@ -87,5 +85,34 @@ export const getFiles = query({
       .query('files')
       .withIndex('by_orgId', (q) => q.eq('orgId', args.orgId))
       .collect()
+  },
+})
+
+export const deleteFile = mutation({
+  args: { fileId: v.id('files') },
+  async handler(ctx, args) {
+    const identity = await ctx.auth.getUserIdentity()
+
+    if (!identity) {
+      throw new ConvexError('You have to be logged in to perform this action!')
+    }
+
+    const file = await ctx.db.get(args.fileId)
+
+    if (!file) {
+      throw new ConvexError(`This file doesn't exist!`)
+    }
+
+    const hasAccess = await hasAccessToOrg(
+      ctx,
+      identity.tokenIdentifier,
+      file.orgId
+    )
+
+    if (!hasAccess) {
+      throw new ConvexError('You do not have access to perform this action.')
+    }
+
+    await ctx.db.delete(args.fileId)
   },
 })
