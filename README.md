@@ -18,7 +18,7 @@ The File Drive Project is a web application designed to provide users with a con
 - Shadcn: A decentralized storage solution for secure and tamper-proof file storage
 - TypeScript: A typed superset of JavaScript for enhanced code quality and maintainability
 - Tailwind CSS: A utility-first CSS framework for rapid UI development
-- [Any additional technologies or libraries used in your project]
+& More
 
 ## How to Run
 
