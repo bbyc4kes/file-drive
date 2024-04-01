@@ -1,4 +1,12 @@
 /** @type {import('next').NextConfig} */
-const nextConfig = {};
+const nextConfig = {
+  images: {
+    remotePatterns: [
+      {
+        hostname: `${process.env.NEXT_PUBLIC_CONVEX_URL_DOMAIN}`,
+      },
+    ],
+  },
+}
 
-export default nextConfig;
+export default nextConfig
