@@ -4,12 +4,14 @@ import { api } from '@/convex/_generated/api'
 import { useOrganization, useUser } from '@clerk/nextjs'
 import { useQuery } from 'convex/react'
 
-import UploadButton from './upload-button'
-import { FileCard } from './file-card'
+import UploadButton from './dashboard/_components/upload-button'
+import { FileCard } from './dashboard/_components/file-card'
 import Image from 'next/image'
-import { Loader2 } from 'lucide-react'
-import { SearchBar } from './search-bar'
+import { FileIcon, Loader2, StarIcon } from 'lucide-react'
+import { SearchBar } from './dashboard/_components/search-bar'
 import { useState } from 'react'
+import { Button } from '@/components/ui/button'
+import Link from 'next/link'
 
 function Placeholder() {
   return (
@@ -44,29 +46,47 @@ export default function Home() {
 
   return (
     <main className="container mx-auto pt-12">
-      {isLoading && (
-        <div className="flex flex-col gap-3 w-full items-center mt-16">
-          <Loader2 className="h-12 w-12 animate-spin opacity-90 text-gray-500" />
-          <div className="text-sm md:text-md">Loading images...</div>
+      <div className="flex gap-8">
+        <div className="w-40 flex flex-col gap-4">
+          <Link href={'/dashboard/files'}>
+            <Button variant={'link'} className="flex gap-2 pl-0">
+              <FileIcon /> All Files
+            </Button>
+          </Link>
+
+          <Link href={'/dashboard/favorites'}>
+            <Button variant={'link'} className="flex gap-2 pl-0">
+              <StarIcon /> Favorites
+            </Button>
+          </Link>
         </div>
-      )}
 
-      {!isLoading && (
-        <>
-          <div className="flex justify-between items-center mb-8">
-            <h1 className="text-4xl font-bold">Your Files</h1>
-            <SearchBar query={query} setQuery={setQuery} />
-            <UploadButton />
-          </div>
+        <div className="w-full">
+          {isLoading && (
+            <div className="flex flex-col gap-3 w-full items-center mt-16">
+              <Loader2 className="h-12 w-12 animate-spin opacity-90 text-gray-500" />
+              <div className="text-sm md:text-md">Loading images...</div>
+            </div>
+          )}
 
-          <div className="flex flex-wrap gap-4">
-            {files?.map((file) => (
-              <FileCard key={file._id} file={file} />
-            ))}
-          </div>
-          {files?.length === 0 && <Placeholder />}
-        </>
-      )}
+          {!isLoading && (
+            <>
+              <div className="flex justify-between items-center mb-8">
+                <h1 className="text-4xl font-bold">Your Files</h1>
+                <SearchBar query={query} setQuery={setQuery} />
+                <UploadButton />
+              </div>
+
+              <div className="flex flex-wrap gap-4">
+                {files?.map((file) => (
+                  <FileCard key={file._id} file={file} />
+                ))}
+              </div>
+              {files?.length === 0 && <Placeholder />}
+            </>
+          )}
+        </div>
+      </div>
     </main>
   )
 }
