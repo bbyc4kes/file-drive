@@ -15,7 +15,7 @@ import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
 const formSchema = z.object({
-  query: z.string().min(0).max(200),
+  query: z.string().min(0).max(30),
 })
 
 export function SearchBar({
@@ -28,7 +28,7 @@ export function SearchBar({
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      query: '',
+      query,
     },
   })
 

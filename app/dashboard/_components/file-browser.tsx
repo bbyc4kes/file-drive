@@ -31,10 +31,10 @@ function Placeholder() {
 
 export function FileBrowser({
   title,
-  favorites,
+  favoritesOnly,
 }: {
   title: string
-  favorites?: boolean
+  favoritesOnly?: boolean
 }) {
   const organization = useOrganization()
   const user = useUser()
@@ -45,11 +45,16 @@ export function FileBrowser({
     orgId = organization.organization?.id ?? user.user?.id
   }
 
+  const favorites = useQuery(
+    api.files.getAllFavorites,
+    orgId ? { orgId } : 'skip'
+  )
+
   const files = useQuery(
     api.files.getFiles,
-    orgId ? { orgId, query, favorites } : 'skip'
+    orgId ? { orgId, query, favorites: favoritesOnly } : 'skip'
   )
-  const isLoading = files === undefined || files === null
+  const isLoading = files === undefined
 
   return (
     <div>
@@ -70,7 +75,11 @@ export function FileBrowser({
 
           <div className="flex flex-wrap gap-4">
             {files?.map((file) => (
-              <FileCard key={file._id} file={file} />
+              <FileCard
+                favorites={favorites ?? []}
+                key={file._id}
+                file={file}
+              />
             ))}
           </div>
           {files?.length === 0 && <Placeholder />}

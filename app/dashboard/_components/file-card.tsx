@@ -2,7 +2,6 @@ import { Button } from '@/components/ui/button'
 import {
   Card,
   CardContent,
-  CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
@@ -32,6 +31,7 @@ import {
   ImageIcon,
   MoreVertical,
   StarIcon,
+  StarOffIcon,
   TrashIcon,
 } from 'lucide-react'
 import React, { ReactNode, useState } from 'react'
@@ -42,8 +42,10 @@ import Image from 'next/image'
 
 function FileCardActions({
   file,
+  isFavorited,
 }: {
   file: Doc<'files'> & { url: string | null }
+  isFavorited: boolean
 }) {
   const deleteFiles = useMutation(api.files.deleteFile)
   const toggleFavorite = useMutation(api.files.toggleFavorite)
@@ -89,10 +91,17 @@ function FileCardActions({
                 fileId: file._id,
               })
             }
-            className="flex gap-1 items-center cursor-pointer text-yellow-400"
+            className="flex gap-1 items-center cursor-pointer"
           >
-            <StarIcon className="w-4 h-4" />
-            Favorite
+            {isFavorited ? (
+              <span className="flex items-center justify-center gap-1 hover:text-gray-700">
+                <StarOffIcon className="w-4 h-4" /> Unfavorite
+              </span>
+            ) : (
+              <span className="flex items-center justify-center gap-1">
+                <StarIcon className="w-4 h-4" /> Favorite
+              </span>
+            )}
           </DropdownMenuItem>
           <DropdownMenuSeparator />
 
@@ -111,8 +120,10 @@ function FileCardActions({
 
 export function FileCard({
   file,
+  favorites,
 }: {
   file: Doc<'files'> & { url: string | null }
+  favorites: Doc<'favorites'>[]
 }) {
   const iconTypes = {
     image: <ImageIcon />,
@@ -158,32 +169,44 @@ export function FileCard({
       .finally(() => setDownloading(false))
   }
 
-  return (
-    <Card>
-      <CardHeader className="relative">
-        <CardTitle className="flex gap-2">
-          <div className="flex justify-center">{iconTypes[file.type]}</div>
-          {file.name}
-        </CardTitle>
-        <div className="absolute top-2 right-2">
-          <FileCardActions file={file} />
-        </div>
-        {/* <CardDescription>Card Description</CardDescription> */}
-      </CardHeader>
-      <CardContent className="h-[200px] flex justify-center items-center">
-        {file.type === 'image' && file.url && (
-          <Image alt={file.name} width={200} height={200} src={file.url} />
-        )}
+  const isFavorited = favorites.some((favorite) => favorite.fileId === file._id)
 
-        {file.type === 'csv' && <GanttChartIcon className="w-20 h-20" />}
-        {file.type === 'pdf' && <FileTextIcon className="w-20 h-20" />}
-        {file.type === 'txt' && <FileTextIcon className="w-20 h-20" />}
-      </CardContent>
-      <CardFooter className="flex justify-center">
-        <Button onClick={handleDownload} disabled={downloading}>
-          Download
-        </Button>
-      </CardFooter>
+  return (
+    <Card className="w-64">
+      <div className="flex flex-col h-full">
+        <CardHeader className="relative min-h-[120px]">
+          <CardTitle className="flex gap-[6px] mr-6 break-words">
+            <div className="flex justify-center">{iconTypes[file.type]}</div>
+            <div className="overflow-scroll">{file.name}</div>
+          </CardTitle>
+          <div className="absolute top-2 right-2">
+            <FileCardActions file={file} isFavorited={isFavorited} />
+          </div>
+        </CardHeader>
+        <CardContent className="flex-grow max-h-72 my-4 overflow-hidden flex justify-center items-center pb-0">
+          <div className="flex justify-center">
+            {file.type === 'image' && file.url && (
+              <Image
+                alt={file.name}
+                width={200}
+                height={200}
+                src={file.url}
+                className="max-h-52 object-cover"
+              />
+            )}
+            {file.type === 'csv' && <GanttChartIcon className="w-20 h-20" />}
+            {file.type === 'pdf' && <FileTextIcon className="w-20 h-20" />}
+            {file.type === 'txt' && <FileTextIcon className="w-20 h-20" />}
+          </div>
+        </CardContent>
+        <div className="mt-auto">
+          <CardFooter className="flex justify-center">
+            <Button onClick={handleDownload} disabled={downloading}>
+              Download
+            </Button>
+          </CardFooter>
+        </div>
+      </div>
     </Card>
   )
 }
