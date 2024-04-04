@@ -39,6 +39,7 @@ import { useMutation } from 'convex/react'
 import { api } from '@/convex/_generated/api'
 import { useToast } from '@/components/ui/use-toast'
 import Image from 'next/image'
+import { Protect } from '@clerk/nextjs'
 
 function FileCardActions({
   file,
@@ -103,8 +104,8 @@ function FileCardActions({
               </span>
             )}
           </DropdownMenuItem>
+          {/* <Protect role={'org:admin'} fallback={<></>}> */}
           <DropdownMenuSeparator />
-
           <DropdownMenuItem
             onClick={() => setIsConfirmOpen(true)}
             className="flex gap-1 items-center cursor-pointer text-red-600"
@@ -112,6 +113,7 @@ function FileCardActions({
             <TrashIcon className="w-4 h-4" />
             Delete
           </DropdownMenuItem>
+          {/* </Protect> */}
         </DropdownMenuContent>
       </DropdownMenu>
     </>
@@ -169,15 +171,19 @@ export function FileCard({
       .finally(() => setDownloading(false))
   }
 
-  const isFavorited = favorites.some((favorite) => favorite.fileId === file._id)
+  let isFavorited = false
+
+  if (favorites) {
+    isFavorited = favorites.some((favorite) => favorite.fileId === file._id)
+  }
 
   return (
-    <Card className="w-64">
+    <Card className="w-[279px]">
       <div className="flex flex-col h-full">
         <CardHeader className="relative min-h-[120px]">
           <CardTitle className="flex gap-[6px] mr-6 break-words">
             <div className="flex justify-center">{iconTypes[file.type]}</div>
-            <div className="overflow-scroll">{file.name}</div>
+            <div className="overflow-auto">{file.name}</div>
           </CardTitle>
           <div className="absolute top-2 right-2">
             <FileCardActions file={file} isFavorited={isFavorited} />

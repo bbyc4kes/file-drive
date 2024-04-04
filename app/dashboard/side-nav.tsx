@@ -10,7 +10,7 @@ export function SideNav() {
   const pathname = usePathname()
 
   return (
-    <div className="w-40 flex flex-col gap-4">
+    <div className="w-5 md:w-40 flex flex-col gap-4">
       <Link href={'/dashboard/files'}>
         <Button
           variant={'link'}
@@ -18,7 +18,7 @@ export function SideNav() {
             'text-blue-500': pathname.includes('/dashboard/files'),
           })}
         >
-          <FileIcon /> All Files
+          <FileIcon /> <span className="hidden md:inline">All Files</span>
         </Button>
       </Link>
 
@@ -29,7 +29,7 @@ export function SideNav() {
             'text-blue-500': pathname.includes('/dashboard/favorites'),
           })}
         >
-          <StarIcon /> Favorites
+          <StarIcon /> <span className="hidden md:inline">Favorites</span>
         </Button>
       </Link>
     </div>

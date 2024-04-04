@@ -67,7 +67,7 @@ export function FileBrowser({
 
       {!isLoading && (
         <>
-          <div className="flex justify-between items-center mb-8">
+          <div className="flex flex-col md:flex-row gap-4 justify-between items-start md:items-center mb-8">
             <h1 className="text-4xl font-bold">{title}</h1>
             <SearchBar query={query} setQuery={setQuery} />
             <UploadButton />
