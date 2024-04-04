@@ -1,7 +1,13 @@
 import { ConvexError, v } from 'convex/values'
-import { MutationCtx, QueryCtx, mutation, query } from './_generated/server'
+import {
+  MutationCtx,
+  QueryCtx,
+  internalMutation,
+  mutation,
+  query,
+} from './_generated/server'
 import { fileTypes } from './schema'
-import { Id } from './_generated/dataModel'
+import { Doc, Id } from './_generated/dataModel'
 
 async function hasAccessToOrg(ctx: QueryCtx | MutationCtx, orgId: string) {
   const identity = await ctx.auth.getUserIdentity()
@@ -69,6 +75,7 @@ export const getFiles = query({
     orgId: v.string(),
     query: v.optional(v.string()),
     favorites: v.optional(v.boolean()),
+    deleteOnly: v.optional(v.boolean()),
   },
   async handler(ctx, args) {
     const hasAccess = await hasAccessToOrg(ctx, args.orgId)
@@ -110,7 +117,62 @@ export const getFiles = query({
       )
     }
 
+    if (args.deleteOnly) {
+      filesWithUrl = filesWithUrl.filter((file) => file.markedAsDeleted)
+    } else {
+      filesWithUrl = filesWithUrl.filter((file) => !file.markedAsDeleted)
+    }
+
     return filesWithUrl
+  },
+})
+
+// function assertCanDeleteFile(user: Doc<'users'>, file: Doc<'files'>) {
+//   const canDelete =
+//     file.userId === user._id ||
+//     user.orgIds.find((org) => org.orgId === file.orgId)?.role === 'admin'
+
+//   if (!canDelete) {
+//     throw new ConvexError('you have no acces to delete this file')
+//   }
+// }
+
+export const restoreFile = mutation({
+  args: { fileId: v.id('files') },
+  async handler(ctx, args) {
+    const access = await hasAccessToFile(ctx, args.fileId)
+
+    if (!access) {
+      throw new ConvexError('no access to file')
+    }
+
+    const isAdmin =
+      access.user.orgIds.find((org) => org.orgId === access.file.orgId)
+        ?.role === 'admin'
+
+    if (!isAdmin) {
+      throw new ConvexError('You have to be an admin to perform this action.')
+    }
+    await ctx.db.patch(args.fileId, {
+      markedAsDeleted: false,
+    })
+  },
+})
+
+export const deleteAllFiles = internalMutation({
+  args: {},
+  async handler(ctx) {
+    const files = await ctx.db
+      .query('files')
+      .withIndex('by_markedAsDeleted', (q) => q.eq('markedAsDeleted', true))
+      .collect()
+
+    await Promise.all(
+      files.map(async (file) => {
+        await ctx.storage.delete(file.fileId)
+        return await ctx.db.delete(file._id)
+      })
+    )
   },
 })
 
@@ -131,7 +193,9 @@ export const deleteFile = mutation({
       throw new ConvexError('You have to be an admin to perform this action.')
     }
 
-    await ctx.db.delete(args.fileId)
+    await ctx.db.patch(args.fileId, {
+      markedAsDeleted: true,
+    })
   },
 })
 

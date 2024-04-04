@@ -33,6 +33,7 @@ import {
   StarIcon,
   StarOffIcon,
   TrashIcon,
+  UndoIcon,
 } from 'lucide-react'
 import React, { ReactNode, useState } from 'react'
 import { useMutation } from 'convex/react'
@@ -49,6 +50,7 @@ function FileCardActions({
   isFavorited: boolean
 }) {
   const deleteFiles = useMutation(api.files.deleteFile)
+  const restoreFile = useMutation(api.files.restoreFile)
   const toggleFavorite = useMutation(api.files.toggleFavorite)
   const [isConfirmOpen, setIsConfirmOpen] = useState(false)
   const { toast } = useToast()
@@ -59,8 +61,8 @@ function FileCardActions({
           <AlertDialogHeader>
             <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
             <AlertDialogDescription>
-              This action cannot be undone. This will permanently delete your
-              account and remove your data from our servers.
+              This action will mark the file for our deletion process. You can
+              undone this action in your trash can.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
@@ -104,16 +106,32 @@ function FileCardActions({
               </span>
             )}
           </DropdownMenuItem>
-          {/* <Protect role={'org:admin'} fallback={<></>}> */}
-          <DropdownMenuSeparator />
-          <DropdownMenuItem
-            onClick={() => setIsConfirmOpen(true)}
-            className="flex gap-1 items-center cursor-pointer text-red-600"
-          >
-            <TrashIcon className="w-4 h-4" />
-            Delete
-          </DropdownMenuItem>
-          {/* </Protect> */}
+          <Protect role={'org:admin'} fallback={<></>}>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem
+              onClick={() => {
+                if (file.markedAsDeleted) {
+                  restoreFile({
+                    fileId: file._id,
+                  })
+                } else {
+                  setIsConfirmOpen(true)
+                }
+              }}
+              className="flex gap-1 items-center cursor-pointer"
+            >
+              {file.markedAsDeleted ? (
+                <div className="flex gap-1 items-center cursor-pointer text-green-600">
+                  <UndoIcon className="w-4 h-4" /> Restore
+                </div>
+              ) : (
+                <div className="flex gap-1 items-center cursor-pointer text-red-600">
+                  <TrashIcon className="w-4 h-4" />
+                  Delete
+                </div>
+              )}
+            </DropdownMenuItem>
+          </Protect>
         </DropdownMenuContent>
       </DropdownMenu>
     </>
@@ -189,7 +207,7 @@ export function FileCard({
             <FileCardActions file={file} isFavorited={isFavorited} />
           </div>
         </CardHeader>
-        <CardContent className="flex-grow max-h-72 my-4 overflow-hidden flex justify-center items-center pb-0">
+        <CardContent className=" max-h-72 my-4 overflow-hidden flex justify-center items-center pb-0">
           <div className="flex justify-center">
             {file.type === 'image' && file.url && (
               <Image
