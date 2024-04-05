@@ -51,7 +51,7 @@ export function FileCard({
             <FileCardActions file={file} isFavorited={file.isFavorited} />
           </div>
         </CardHeader>
-        <CardContent className="max-h-72 mb-4 overflow-hidden flex justify-center items-center pb-0">
+        <CardContent className="max-h-72 mb-4 overflow-hidden flex justify-center items-center pb-0 min-h-[224px]">
           <div className="flex justify-center p-2">
             {file.type === 'image' && file.url && (
               <Image

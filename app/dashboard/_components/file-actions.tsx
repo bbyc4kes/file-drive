@@ -26,7 +26,7 @@ import {
   UndoIcon,
 } from 'lucide-react'
 import React, { useState } from 'react'
-import { useMutation } from 'convex/react'
+import { useMutation, useQuery } from 'convex/react'
 import { api } from '@/convex/_generated/api'
 import { useToast } from '@/components/ui/use-toast'
 import { Protect } from '@clerk/nextjs'
@@ -41,6 +41,7 @@ export function FileCardActions({
   const deleteFiles = useMutation(api.files.deleteFile)
   const restoreFile = useMutation(api.files.restoreFile)
   const toggleFavorite = useMutation(api.files.toggleFavorite)
+  const acc = useQuery(api.users.getAcc)
 
   const [isConfirmOpen, setIsConfirmOpen] = useState(false)
   const { toast } = useToast()
@@ -131,7 +132,16 @@ export function FileCardActions({
               </span>
             )}
           </DropdownMenuItem>
-          <Protect role={'org:admin'} fallback={<></>}>
+          <Protect
+            condition={(check) => {
+              return (
+                check({
+                  role: 'org:admin',
+                }) || file.userId === acc?._id
+              )
+            }}
+            fallback={<></>}
+          >
             <DropdownMenuSeparator />
             <DropdownMenuItem
               onClick={() => {

@@ -7,7 +7,7 @@ import {
   query,
 } from './_generated/server'
 import { fileTypes } from './schema'
-import { Id } from './_generated/dataModel'
+import { Doc, Id } from './_generated/dataModel'
 
 async function hasAccessToOrg(ctx: QueryCtx | MutationCtx, orgId: string) {
   const identity = await ctx.auth.getUserIdentity()
@@ -15,6 +15,7 @@ async function hasAccessToOrg(ctx: QueryCtx | MutationCtx, orgId: string) {
   if (!identity) {
     return null
   }
+
   const user = await ctx.db
     .query('users')
     .withIndex('by_tokenIndentifier', (q) =>
@@ -133,6 +134,17 @@ export const getFiles = query({
   },
 })
 
+function canDeleteFile(user: Doc<'users'>, file: Doc<'files'>) {
+  const canDelete =
+    file.userId === user._id ||
+    user.orgIds.find((org) => org.orgId === file.orgId)?.role === 'admin'
+
+  if (!canDelete) {
+    throw new ConvexError('You have no access to perform this action.')
+  }
+  return canDelete
+}
+
 export const restoreFile = mutation({
   args: { fileId: v.id('files') },
   async handler(ctx, args) {
@@ -142,13 +154,8 @@ export const restoreFile = mutation({
       throw new ConvexError('no access to file')
     }
 
-    const isAdmin =
-      access.user.orgIds.find((org) => org.orgId === access.file.orgId)
-        ?.role === 'admin'
+    canDeleteFile(access.user, access.file)
 
-    if (!isAdmin) {
-      throw new ConvexError('You have to be an admin to perform this action.')
-    }
     await ctx.db.patch(args.fileId, {
       markedAsDeleted: false,
     })
@@ -181,13 +188,7 @@ export const deleteFile = mutation({
       throw new ConvexError(`You don't have access to perform this action.`)
     }
 
-    const isAdmin =
-      access.user.orgIds.find((org) => org.orgId === access.file.orgId)
-        ?.role === 'admin'
-
-    if (!isAdmin) {
-      throw new ConvexError('You have to be an admin to perform this action.')
-    }
+    canDeleteFile(access.user, access.file)
 
     await ctx.db.patch(args.fileId, {
       markedAsDeleted: true,
