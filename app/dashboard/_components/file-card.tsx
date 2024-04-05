@@ -1,4 +1,3 @@
-import { Button } from '@/components/ui/button'
 import {
   Card,
   CardContent,
@@ -6,6 +5,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -26,6 +26,7 @@ import {
 
 import { Doc } from '@/convex/_generated/dataModel'
 import {
+  DownloadIcon,
   FileTextIcon,
   GanttChartIcon,
   ImageIcon,
@@ -35,12 +36,14 @@ import {
   TrashIcon,
   UndoIcon,
 } from 'lucide-react'
+import { format, formatDistance, formatRelative, subDays } from 'date-fns'
 import React, { ReactNode, useState } from 'react'
-import { useMutation } from 'convex/react'
+import { useMutation, useQuery } from 'convex/react'
 import { api } from '@/convex/_generated/api'
 import { useToast } from '@/components/ui/use-toast'
 import Image from 'next/image'
 import { Protect } from '@clerk/nextjs'
+import { formatRevalidate } from 'next/dist/server/lib/revalidate'
 
 function FileCardActions({
   file,
@@ -52,8 +55,38 @@ function FileCardActions({
   const deleteFiles = useMutation(api.files.deleteFile)
   const restoreFile = useMutation(api.files.restoreFile)
   const toggleFavorite = useMutation(api.files.toggleFavorite)
+
   const [isConfirmOpen, setIsConfirmOpen] = useState(false)
   const { toast } = useToast()
+
+  const handleDownload = () => {
+    if (!file.url) return
+
+    const fileName = file.name
+    const fileTypeExtensions = {
+      image: '.png',
+      pdf: '.pdf',
+      txt: '.txt',
+      csv: '.csv',
+    }
+
+    fetch(file.url)
+      .then((response) => response.blob())
+      .then((blob) => {
+        const url = window.URL.createObjectURL(new Blob([blob]))
+        const extension = fileTypeExtensions[file.type] || ''
+        const downloadFileName = fileName + extension
+
+        const link = document.createElement('a')
+        link.href = url
+        link.setAttribute('download', downloadFileName)
+
+        document.body.appendChild(link)
+        link.click()
+        document.body.removeChild(link)
+      })
+      .catch((error) => console.error('Error downloading file:', error))
+  }
   return (
     <>
       <AlertDialog open={isConfirmOpen} onOpenChange={setIsConfirmOpen}>
@@ -88,6 +121,12 @@ function FileCardActions({
           <MoreVertical />
         </DropdownMenuTrigger>
         <DropdownMenuContent>
+          <DropdownMenuItem
+            onClick={handleDownload}
+            className="flex gap-1 items-center cursor-pointer"
+          >
+            <DownloadIcon className="w-4 h-4" /> Download
+          </DropdownMenuItem>
           <DropdownMenuItem
             onClick={() =>
               toggleFavorite({
@@ -152,42 +191,9 @@ export function FileCard({
     csv: <GanttChartIcon />,
   } as Record<Doc<'files'>['type'], ReactNode>
 
-  const [downloading, setDownloading] = useState(false)
-
-  const handleDownload = () => {
-    if (!file.url) return
-
-    const fileName = file.name
-
-    setDownloading(true)
-
-    fetch(file.url)
-      .then((response) => response.blob())
-      .then((blob) => {
-        const url = window.URL.createObjectURL(new Blob([blob]))
-        const link = document.createElement('a')
-        link.href = url
-        link.setAttribute(
-          'download',
-          `${fileName}${
-            file.type === 'image'
-              ? '.png'
-              : file.type === 'pdf'
-              ? '.pdf'
-              : file.type === 'txt'
-              ? '.txt'
-              : file.type === 'csv'
-              ? '.csv'
-              : ''
-          }`
-        )
-        document.body.appendChild(link)
-        link.click()
-        document.body.removeChild(link)
-      })
-      .catch((error) => console.error('Error downloading file:', error))
-      .finally(() => setDownloading(false))
-  }
+  const userProfile = useQuery(api.users.getUserProfile, {
+    userId: file.userId,
+  })
 
   let isFavorited = false
 
@@ -198,17 +204,19 @@ export function FileCard({
   return (
     <Card className="w-[279px]">
       <div className="flex flex-col h-full">
-        <CardHeader className="relative min-h-[120px]">
-          <CardTitle className="flex gap-[6px] mr-6 break-words">
-            <div className="flex justify-center">{iconTypes[file.type]}</div>
-            <div className="overflow-auto">{file.name}</div>
+        <CardHeader className="relative min-h-10 pb-0">
+          <CardTitle className="flex gap-[6px] break-words text-base font-normal justify-center items-center text-center">
+            <div className="absolute top-4 left-4">{iconTypes[file.type]}</div>
+            <div className="overflow-auto h-12 text-center mt-6">
+              {file.name}
+            </div>
           </CardTitle>
           <div className="absolute top-2 right-2">
             <FileCardActions file={file} isFavorited={isFavorited} />
           </div>
         </CardHeader>
-        <CardContent className=" max-h-72 my-4 overflow-hidden flex justify-center items-center pb-0">
-          <div className="flex justify-center">
+        <CardContent className="max-h-72 mb-4 overflow-hidden flex justify-center items-center pb-0">
+          <div className="flex justify-center p-2">
             {file.type === 'image' && file.url && (
               <Image
                 alt={file.name}
@@ -224,10 +232,23 @@ export function FileCard({
           </div>
         </CardContent>
         <div className="mt-auto">
-          <CardFooter className="flex justify-center">
-            <Button onClick={handleDownload} disabled={downloading}>
-              Download
-            </Button>
+          <CardFooter className="flex justify-between">
+            <div className="flex gap-2 text-xs items-center text-gray-700 w-40">
+              <Avatar className="w-6 h-6">
+                <AvatarImage src={userProfile?.image} />
+                <AvatarFallback>
+                  {userProfile?.name
+                    ?.split(' ')
+                    .map((word) => word[0])
+                    .join('')}
+                </AvatarFallback>
+              </Avatar>
+              {userProfile?.name}
+            </div>
+            <div className="text-xs text-gray-700">
+              Updated on{' '}
+              {formatRelative(new Date(file._creationTime), new Date())}
+            </div>
           </CardFooter>
         </div>
       </div>

@@ -57,9 +57,6 @@ export default function UploadButton() {
   const fileRef = form.register('file')
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values)
-    console.log('files:', values.file)
-
     if (!orgId) return
 
     const fileType = values.file[0].type
@@ -71,8 +68,6 @@ export default function UploadButton() {
       body: values.file[0],
     })
     const { storageId } = await result.json()
-
-    console.log(fileType)
 
     const types = {
       'image/png': 'image',

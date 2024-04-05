@@ -65,6 +65,7 @@ export const createFile = mutation({
       name: args.name,
       fileId: args.fileId,
       orgId: args.orgId,
+      userId: hasAccess.user._id,
       type: args.type,
     })
   },
