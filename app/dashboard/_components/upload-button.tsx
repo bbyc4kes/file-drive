@@ -30,7 +30,7 @@ import { Loader2 } from 'lucide-react'
 import { Doc } from '@/convex/_generated/dataModel'
 
 const formSchema = z.object({
-  title: z.string().min(1).max(200),
+  title: z.string().min(1).max(30),
   file: z
     .custom<FileList>(
       (val) => val instanceof FileList,
@@ -69,6 +69,8 @@ export default function UploadButton() {
     })
     const { storageId } = await result.json()
 
+    console.log(values.file[0])
+
     const types = {
       'image/png': 'image',
       'image/jpeg': 'image',
@@ -76,6 +78,7 @@ export default function UploadButton() {
       'application/pdf': 'pdf',
       'text/plain': 'txt',
       'text/csv': 'csv',
+      'application/vnd.ms-excel': 'csv',
     } as Record<string, Doc<'files'>['type']>
 
     try {
@@ -96,7 +99,7 @@ export default function UploadButton() {
       })
     } catch (err) {
       setIsFileDialogOpen(false)
-
+      console.log(err)
       toast({
         variant: 'destructive',
         title: 'Oops, something went wrong!',

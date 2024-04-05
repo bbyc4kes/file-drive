@@ -8,7 +8,12 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 
 import { Doc } from '@/convex/_generated/dataModel'
-import { FileTextIcon, GanttChartIcon, ImageIcon } from 'lucide-react'
+import {
+  BookTextIcon,
+  FileTextIcon,
+  GanttChartIcon,
+  ImageIcon,
+} from 'lucide-react'
 import { formatRelative } from 'date-fns'
 import React, { ReactNode } from 'react'
 import { useQuery } from 'convex/react'
@@ -23,7 +28,7 @@ export function FileCard({
 }) {
   const iconTypes = {
     image: <ImageIcon />,
-    pdf: <FileTextIcon />,
+    pdf: <BookTextIcon />,
     txt: <FileTextIcon />,
     csv: <GanttChartIcon />,
   } as Record<Doc<'files'>['type'], ReactNode>
