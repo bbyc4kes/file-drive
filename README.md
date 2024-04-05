@@ -2,6 +2,10 @@
 
 The File Drive Project is a web application designed to provide users with a convenient platform for storing and managing files. It offers a secure and efficient way to upload, organize, and access files from anywhere.
 
+![image](https://github.com/bbyc4kes/file-drive/assets/153362892/1875a2c8-fb60-4cd8-84ca-dfc00cba2357)
+
+![image](https://github.com/bbyc4kes/file-drive/assets/153362892/f50ef884-68f8-4cac-af62-b8e04c4985ff)
+
 ## Features
 
 - Upload files of various formats such as documents, images, and videos.
