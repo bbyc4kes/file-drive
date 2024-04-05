@@ -7,7 +7,7 @@ import {
   query,
 } from './_generated/server'
 import { fileTypes } from './schema'
-import { Doc, Id } from './_generated/dataModel'
+import { Id } from './_generated/dataModel'
 
 async function hasAccessToOrg(ctx: QueryCtx | MutationCtx, orgId: string) {
   const identity = await ctx.auth.getUserIdentity()
@@ -127,16 +127,6 @@ export const getFiles = query({
     return filesWithUrl
   },
 })
-
-// function assertCanDeleteFile(user: Doc<'users'>, file: Doc<'files'>) {
-//   const canDelete =
-//     file.userId === user._id ||
-//     user.orgIds.find((org) => org.orgId === file.orgId)?.role === 'admin'
-
-//   if (!canDelete) {
-//     throw new ConvexError('you have no acces to delete this file')
-//   }
-// }
 
 export const restoreFile = mutation({
   args: { fileId: v.id('files') },
