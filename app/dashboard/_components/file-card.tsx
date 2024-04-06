@@ -38,7 +38,7 @@ export function FileCard({
   })
 
   return (
-    <Card className="w-[279px]">
+    <Card className="w-[240px] mmd:w-[240px]">
       <div className="flex flex-col h-full">
         <CardHeader className="relative min-h-10 pb-0">
           <CardTitle className="flex gap-[6px] break-words text-base font-normal justify-center items-center text-center">

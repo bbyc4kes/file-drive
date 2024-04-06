@@ -89,8 +89,8 @@ export function FileBrowser({
 
   return (
     <div>
-      <div className="flex flex-col md:flex-row gap-4 justify-between items-start md:items-center mb-8">
-        <h1 className="text-xl lg:text-4xl md:font-bold font-semibold">
+      <div className="flex flex-col md:flex-row gap-4 justify-between items-start md:items-center mt-2 mb-8">
+        <h1 className="text-xl uppercase md:normal-case tex lg:text-4xl md:font-bold font-semibold">
           {title}
         </h1>
 
@@ -99,8 +99,8 @@ export function FileBrowser({
       </div>
 
       <Tabs defaultValue="grid">
-        <div className="flex justify-between items-center">
-          <TabsList className="mb-4 md:mb-8">
+        <div className="flex justify-between items-center mb-4 md:mb-8">
+          <TabsList className="mt-6">
             <TabsTrigger
               value="grid"
               className="flex gap-1 items-center justify-center"
@@ -116,8 +116,10 @@ export function FileBrowser({
               Table
             </TabsTrigger>
           </TabsList>
-          <div className="flex gap-2 items-center">
-            <Label htmlFor="type-filter">Type Filter</Label>
+          <div className="flex gap-2 items-center flex-col md:flex-row">
+            <Label htmlFor="type-filter" className="">
+              Type Filter
+            </Label>
             <Select
               value={type}
               onValueChange={(newType) => {

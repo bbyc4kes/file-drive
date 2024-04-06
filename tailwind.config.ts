@@ -10,6 +10,9 @@ const config = {
   ],
   prefix: '',
   theme: {
+    screens: {
+      mmd: '613px',
+    },
     container: {
       center: true,
       padding: '2rem',
