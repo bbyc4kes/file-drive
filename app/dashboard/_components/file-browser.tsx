@@ -22,6 +22,7 @@ import {
 } from '@/components/ui/select'
 import { Doc } from '@/convex/_generated/dataModel'
 import { Label } from '@/components/ui/label'
+import TypeFilter from './type-filter'
 
 function Placeholder() {
   return (
@@ -90,7 +91,7 @@ export function FileBrowser({
   return (
     <div>
       <div className="flex flex-col md:flex-row gap-4 justify-between items-start md:items-center mt-2 mb-8">
-        <h1 className="text-xl uppercase md:normal-case tex lg:text-4xl md:font-bold font-semibold">
+        <h1 className="text-2xl uppercase md:normal-case tex lg:text-4xl md:font-bold font-semibold">
           {title}
         </h1>
 
@@ -99,8 +100,8 @@ export function FileBrowser({
       </div>
 
       <Tabs defaultValue="grid">
-        <div className="flex justify-between items-center mb-4 md:mb-8">
-          <TabsList className="mt-6">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 md:mb-8">
+          <TabsList>
             <TabsTrigger
               value="grid"
               className="flex gap-1 items-center justify-center"
@@ -116,32 +117,7 @@ export function FileBrowser({
               Table
             </TabsTrigger>
           </TabsList>
-          <div className="flex gap-2 items-center flex-col md:flex-row">
-            <Label htmlFor="type-filter" className="">
-              Type Filter
-            </Label>
-            <Select
-              value={type}
-              onValueChange={(newType) => {
-                setType(newType as any)
-              }}
-            >
-              <SelectTrigger
-                id="type-filter"
-                className="w-[180px]"
-                defaultValue="all"
-              >
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All</SelectItem>
-                <SelectItem value="image">Image</SelectItem>
-                <SelectItem value="csv">CSV</SelectItem>
-                <SelectItem value="pdf">PDF</SelectItem>
-                <SelectItem value="txt">Text</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+          <TypeFilter type={type} setType={setType} />
         </div>
         {isLoading && (
           <div className="flex flex-col gap-3 w-full items-center mt-16">

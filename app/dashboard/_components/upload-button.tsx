@@ -69,8 +69,6 @@ export default function UploadButton() {
     })
     const { storageId } = await result.json()
 
-    console.log(values.file[0])
-
     const types = {
       'image/png': 'image',
       'image/jpeg': 'image',
@@ -99,7 +97,6 @@ export default function UploadButton() {
       })
     } catch (err) {
       setIsFileDialogOpen(false)
-      console.log(err)
       toast({
         variant: 'destructive',
         title: 'Oops, something went wrong!',
