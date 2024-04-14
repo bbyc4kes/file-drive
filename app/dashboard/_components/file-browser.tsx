@@ -90,8 +90,8 @@ export function FileBrowser({
 
   return (
     <div>
-      <div className="flex flex-col md:flex-row gap-4 justify-between items-start md:items-center mt-2 mb-8">
-        <h1 className="text-2xl uppercase md:normal-case tex lg:text-4xl md:font-bold font-semibold">
+      <div className="flex flex-col md:flex-row gap-4 justify-between items-start md:items-center mt-2 mb-4 md:mb-8">
+        <h1 className="text-2xl uppercase md:normal-case tex lg:text-4xl font-bold">
           {title}
         </h1>
 
@@ -101,6 +101,11 @@ export function FileBrowser({
 
       <Tabs defaultValue="grid">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 md:mb-8">
+          <TypeFilter
+            type={type}
+            setType={setType}
+            styles="block mb-2 md:hidden"
+          />
           <TabsList>
             <TabsTrigger
               value="grid"
@@ -117,7 +122,7 @@ export function FileBrowser({
               Table
             </TabsTrigger>
           </TabsList>
-          <TypeFilter type={type} setType={setType} />
+          <TypeFilter type={type} setType={setType} styles="hidden md:block" />
         </div>
         {isLoading && (
           <div className="flex flex-col gap-3 w-full items-center mt-16">

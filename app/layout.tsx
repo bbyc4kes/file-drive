@@ -5,6 +5,7 @@ import ConvexClientProvider from './ConvexClientProvider'
 import Header from './header'
 import { Toaster } from '@/components/ui/toaster'
 import { Footer } from './footer'
+import { ThemeProvider } from '@/components/theme-provider'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -20,13 +21,20 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" className="scroll-smooth" suppressHydrationWarning>
       <body className={inter.className}>
         <ConvexClientProvider>
-          <Toaster />
-          <Header />
-          {children}
-          <Footer />
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <Toaster />
+            <Header />
+            {children}
+            <Footer />
+          </ThemeProvider>
         </ConvexClientProvider>
       </body>
     </html>

@@ -11,13 +11,16 @@ import { Dispatch, SetStateAction } from 'react'
 const TypeFilter = ({
   type,
   setType,
+  styles,
 }: {
   type: 'image' | 'all' | 'csv' | 'pdf' | 'txt'
   setType: Dispatch<SetStateAction<'image' | 'csv' | 'txt' | 'pdf' | 'all'>>
+  styles?: string
 }) => {
   return (
-    <div className="flex gap-2 items-center flex-col md:flex-row">
-      <Label htmlFor="type-filter">Type Filter</Label>
+    <div
+      className={`flex gap-2 items-center flex-col md:flex-row mt-2 ${styles}`}
+    >
       <Select
         value={type}
         onValueChange={(newType) => {
