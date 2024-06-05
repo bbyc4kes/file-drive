@@ -69,7 +69,7 @@ export function FileCard({
         </CardContent>
         <div className="mt-auto">
           <CardFooter className="flex justify-between">
-            <div className="flex gap-2 text-xs items-center text-gray-700 w-40">
+            <div className="flex gap-2 text-xs items-center w-40">
               <Avatar className="w-6 h-6">
                 <AvatarImage src={userProfile?.image} />
                 <AvatarFallback>
@@ -81,7 +81,7 @@ export function FileCard({
               </Avatar>
               {userProfile?.name}
             </div>
-            <div className="text-xs text-gray-700">
+            <div className="text-xs">
               Updated on{' '}
               {formatRelative(new Date(file._creationTime), new Date())}
             </div>

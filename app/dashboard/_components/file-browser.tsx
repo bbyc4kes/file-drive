@@ -13,15 +13,7 @@ import { useState } from 'react'
 import { DataTable } from './file-table'
 import { columns } from './columns'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
 import { Doc } from '@/convex/_generated/dataModel'
-import { Label } from '@/components/ui/label'
 import TypeFilter from './type-filter'
 
 function Placeholder() {
