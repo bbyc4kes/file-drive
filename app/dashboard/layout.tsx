@@ -1,9 +1,3 @@
-// export const metadata: Metadata = {
-//   title: 'File Drive',
-//   description:
-//     'Store, upload and manage files with your team using File Drive!',
-// }
-
 import { SideNav } from './side-nav'
 
 export default function DashboardLayout({
